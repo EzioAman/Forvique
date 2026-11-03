@@ -1,5 +1,5 @@
 # This is Forvique
-Forvique is a startup that aimms to deliver reliable SaaS, IaaS productsand solutions to businesses and individuals around the world. 
+Forvique is a startup that aims to deliver reliable SaaS, IaaS productsand solutions to businesses and individuals around the world. 
 
 ## Getting Started
 
