@@ -1,0 +1,1 @@
+All components are created in the `components/` folder & must inherit global themes.
