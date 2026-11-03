@@ -60,37 +60,10 @@ const Footer = () => {
                         </li>
                     </ul>
                 </div>
-                <div className="md:col-span-1 col-span-3">
-                    <p className="mb-6 text-[13px] font-medium text-neutral-900 md:mb-6 dark:text-neutral-100">Legal</p>
-                    <ul className="text-[13px] space-y-0.5">
-                        <li>
-                            <a className="items-center text-neutral-600 flex min-h-7 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100">Privacy</a>
-                        </li>
-                        <li>
-                            <a className="items-center text-neutral-600 flex min-h-7 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100">Terms</a>
-                        </li>
-                        <li>
-                            <a className="items-center text-neutral-600 flex min-h-7 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100">Cookie Policy</a>
-                        </li>
-                    </ul>
-                </div>
-                <div className="md:col-span-1 col-span-3">
-                    <p className="mb-6 text-[13px] font-medium text-neutral-900 md:mb-6 dark:text-neutral-100">Connect</p>
-                    <ul className="text-[13px] space-y-0.5">
-                        <li>
-                            <a className="items-center text-neutral-600 flex min-h-7 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100">Twitter</a>
-                        </li>
-                        <li>
-                            <a className="items-center text-neutral-600 flex min-h-7 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100">LinkedIn</a>
-                        </li>
-                        <li>
-                            <a className="items-center text-neutral-600 flex min-h-7 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100">GitHub</a>
-                        </li>
-                    </ul>
-                </div>
             </div>
         </footer>
     );
 };
 
 export default Footer;
+
