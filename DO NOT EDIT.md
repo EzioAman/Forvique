@@ -1,0 +1,1 @@
+the app/ route is the main webpage (not being developed yet). The current goal is the AI page for the main Forvique website, if you've no context of what you're building ask me first before touching the route or code.
