@@ -1,0 +1,51 @@
+/* Chrome for the components_check route only. Neutral tokens until the palette is approved;
+   follows the system light/dark setting. */
+.cc {
+  --cc-bg: #fafafa; --cc-panel: #f0f0f0; --cc-raised: #e4e4e4; --cc-hover: #dcdcdc;
+  --cc-fg: #171717; --cc-muted: #6b6b6b; --cc-active: #fff;
+  display: flex; flex: 1; min-height: 100vh; gap: 16px; padding: 16px;
+  background: var(--cc-bg); color: var(--cc-fg); font-family: var(--font-sans), system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  .cc { --cc-bg: #0a0a0a; --cc-panel: #171717; --cc-raised: #262626; --cc-hover: #303030; --cc-fg: #ededed; --cc-muted: #8a8a8a; --cc-active: #3a3a3a; }
+}
+.cc-side { width: 230px; flex: none; position: sticky; top: 16px; align-self: flex-start; max-height: calc(100vh - 32px); overflow: auto; }
+.cc-brand { font-size: 15px; font-weight: 600; padding: 4px 12px 16px; }
+.cc-group { margin-bottom: 20px; }
+.cc-group h2 { font-size: 12px; font-weight: 500; color: var(--cc-muted); padding: 0 12px 6px; }
+.cc-link { display: block; padding: 7px 12px; border-radius: 10px; font-size: 14px; color: var(--cc-muted); text-decoration: none; }
+.cc-link:hover { background: var(--cc-panel); color: var(--cc-fg); }
+.cc-link[aria-current="page"] { background: var(--cc-raised); color: var(--cc-fg); font-weight: 500; }
+.cc-empty { padding: 4px 12px; font-size: 13px; color: var(--cc-muted); }
+
+.cc-main { flex: 1; min-width: 0; max-width: 1180px; margin: 0 auto; display: flex; gap: 14px; }
+.cc-stage { flex: 1; min-width: 0; min-height: 640px; border-radius: 32px; background: var(--cc-panel); display: flex; align-items: center; justify-content: center; }
+.cc-panel { width: 354px; flex: none; border-radius: 32px; background: var(--cc-panel); padding: 20px 22px; align-self: stretch; display: flex; flex-direction: column; }
+.cc-panel h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+.cc-desc { margin: 12px 0 24px; color: var(--cc-muted); font-size: 15px; line-height: 1.5; }
+.cc-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-size: 15px; }
+.cc-row[data-wrap] { flex-direction: column; align-items: stretch; gap: 8px; }
+.cc-row[data-wrap] .cc-seg { flex-wrap: wrap; border-radius: 22px; }
+.cc-seg { display: flex; gap: 2px; padding: 4px; border-radius: 999px; background: var(--cc-raised); }
+.cc-seg button { border: 0; background: none; color: var(--cc-muted); font: inherit; font-size: 14px; padding: 7px 13px; border-radius: 999px; cursor: pointer; display: flex; align-items: center; }
+.cc-seg button[aria-pressed="true"] { background: var(--cc-active); color: var(--cc-fg); font-weight: 600; }
+.cc-seg svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 7; }
+.cc-slider { display: block; position: relative; height: 52px; margin-bottom: 12px; border-radius: 14px; background: var(--cc-raised); overflow: hidden; }
+.cc-slider:focus-within { outline: 2px solid var(--cc-muted); }
+.cc-fill { position: absolute; inset: 0 auto 0 0; background: var(--cc-hover); }
+.cc-slider > span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; font-size: 15px; pointer-events: none; }
+.cc-slider > span b { font-weight: 600; }
+.cc-slider input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; }
+.cc-more { margin-top: 20px; }
+.cc-more summary { cursor: pointer; color: var(--cc-muted); font-size: 15px; margin-bottom: 14px; }
+.cc-actions { margin-top: auto; padding-top: 24px; display: flex; flex-direction: column; gap: 10px; }
+.cc-actions button { height: 47px; border-radius: 999px; font: inherit; font-size: 15px; cursor: pointer; transition: background 0.15s, opacity 0.15s; }
+.cc-ghost { border: 1px solid var(--cc-raised); background: none; color: var(--cc-fg); }
+.cc-ghost:hover { background: var(--cc-raised); }
+.cc-primary { border: 0; background: var(--cc-fg); color: var(--cc-bg); font-weight: 600; }
+.cc-primary[data-done] { background: var(--cc-raised); color: var(--cc-fg); }
+.cc-primary:disabled { opacity: 0.6; cursor: progress; }
+.cc-actions button:focus-visible { outline: 2px solid var(--cc-muted); outline-offset: 2px; }
+
+@media (max-width: 1100px) { .cc-main { flex-direction: column; } .cc-panel { width: auto; align-self: stretch; } }
+@media (max-width: 800px) { .cc { flex-direction: column; } .cc-side { position: static; width: auto; max-height: none; } }

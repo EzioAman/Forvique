@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 490" width="400" height="490">
+  <!-- Placeholder print drawn for this project (not a stock image): ink on paper, paper = luminance 0.9 -->
+  <defs>
+    <pattern id="dots" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(30)">
+      <circle cx="3" cy="3" r="1.5" fill="#e6e6e6" opacity="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="400" height="490" fill="#e6e6e6"/>
+  <g fill="#151515" stroke="none">
+    <path d="M200 300 C 196 360 206 420 188 490" fill="none" stroke="#151515" stroke-width="9" stroke-linecap="round"/>
+    <ellipse cx="238" cy="392" rx="46" ry="16" transform="rotate(-35 238 392)"/>
+    <ellipse cx="158" cy="430" rx="42" ry="14" transform="rotate(30 158 430)"/>
+    <g transform="translate(200 205)">
+      <g id="p">
+        <ellipse cx="0" cy="-92" rx="34" ry="92"/>
+        <ellipse cx="0" cy="-92" rx="34" ry="92" transform="rotate(45)"/>
+        <ellipse cx="0" cy="-92" rx="34" ry="92" transform="rotate(90)"/>
+        <ellipse cx="0" cy="-92" rx="34" ry="92" transform="rotate(135)"/>
+        <ellipse cx="0" cy="-92" rx="34" ry="92" transform="rotate(180)"/>
+        <ellipse cx="0" cy="-92" rx="34" ry="92" transform="rotate(225)"/>
+        <ellipse cx="0" cy="-92" rx="34" ry="92" transform="rotate(270)"/>
+        <ellipse cx="0" cy="-92" rx="34" ry="92" transform="rotate(315)"/>
+      </g>
+      <g fill="#e6e6e6">
+        <ellipse cx="0" cy="-70" rx="3" ry="46" transform="rotate(22.5)"/>
+        <ellipse cx="0" cy="-70" rx="3" ry="46" transform="rotate(67.5)"/>
+        <ellipse cx="0" cy="-70" rx="3" ry="46" transform="rotate(112.5)"/>
+        <ellipse cx="0" cy="-70" rx="3" ry="46" transform="rotate(157.5)"/>
+        <ellipse cx="0" cy="-70" rx="3" ry="46" transform="rotate(202.5)"/>
+        <ellipse cx="0" cy="-70" rx="3" ry="46" transform="rotate(247.5)"/>
+        <ellipse cx="0" cy="-70" rx="3" ry="46" transform="rotate(292.5)"/>
+        <ellipse cx="0" cy="-70" rx="3" ry="46" transform="rotate(337.5)"/>
+        <circle r="34"/>
+      </g>
+      <circle r="24"/>
+    </g>
+  </g>
+  <rect width="400" height="490" fill="url(#dots)"/>
+</svg>

@@ -1,0 +1,26 @@
+/* Stand-in styles (the original Generate.css was not supplied). Follows the system light/dark setting. */
+.gen { --gen-frame: #e6e6e6; --gen-fg: #171717; --gen-btn: #171717; --gen-btn-fg: #fff; --gen-chip: rgba(255,255,255,0.7); display: inline-block; }
+@media (prefers-color-scheme: dark) { .gen { --gen-frame: #1c1c1c; --gen-fg: #f5f5f5; --gen-btn: #f5f5f5; --gen-btn-fg: #171717; --gen-chip: rgba(0,0,0,0.55); } }
+.gen-card { position: relative; overflow: hidden; width: 400px; height: 490px; max-width: 100%; background: var(--gen-frame); color: var(--gen-fg); }
+.gen-defs { position: absolute; width: 0; height: 0; }
+.gen-print { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; user-select: none; pointer-events: none; }
+.gen-go {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  height: 44px; padding: 0 24px; border: 0; border-radius: 999px; cursor: pointer;
+  background: var(--gen-btn); color: var(--gen-btn-fg); font: inherit; font-size: 15px; font-weight: 500;
+  transition: opacity 0.25s, transform 0.2s;
+}
+.gen-go:hover { transform: translate(-50%, -50%) scale(1.03); }
+.gen-go:focus-visible { outline: 2px solid #3b5bff; outline-offset: 3px; }
+.gen[data-loading="true"] .gen-go { opacity: 0; pointer-events: none; }
+.gen[data-made="true"] .gen-go { opacity: 0; }
+.gen[data-made="true"]:not([data-loading="true"]) .gen-card:hover .gen-go,
+.gen[data-made="true"]:not([data-loading="true"]) .gen-go:focus-visible { opacity: 1; }
+.gen-pct {
+  position: absolute; left: 14px; bottom: 14px; padding: 6px 12px; border-radius: 999px;
+  background: var(--gen-chip); color: var(--gen-fg); backdrop-filter: blur(8px);
+  font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums;
+  opacity: 0; transition: opacity 0.2s;
+}
+.gen[data-loading="true"] .gen-pct { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .gen-go { transition: none; } }

@@ -1,0 +1,49 @@
+{
+  "watcher": {
+    "at": "2026-11-08T00:25:33.949Z",
+    "settings": {
+      "fill": "Dark",
+      "shape": "Ball",
+      "eyes": "Dots",
+      "follow": 50,
+      "bounce": 30,
+      "size": 100,
+      "eyeScale": 1,
+      "eyeWidth": 1,
+      "eyeHeight": 1,
+      "eyeRound": 1,
+      "mood": "Neutral",
+      "poke": "Random",
+      "speech": "On",
+      "idleStyle": "Random"
+    }
+  },
+  "signature": {
+    "at": "2026-11-08T00:40:25.288Z",
+    "settings": {
+      "ink": "Black",
+      "pen": 40,
+      "smooth": 50,
+      "rewind": 50,
+      "corner": 20,
+      "idle": "On"
+    }
+  },
+  "seek": {
+    "at": "2026-11-08T00:58:39.884Z",
+    "settings": {
+      "give": 0,
+      "spring": 10,
+      "width": 350,
+      "corner": 24
+    }
+  },
+  "generate": {
+    "at": "2026-11-08T00:58:47.601Z",
+    "settings": {
+      "pace": 5,
+      "ripple": 50,
+      "corner": 20
+    }
+  }
+}
