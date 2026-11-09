@@ -1,6 +1,6 @@
 "use client";
 import { Panel } from "../Panel";
-import { Generate } from "./Generate";
+import { Generate } from "../../../components/Generate";
 
 /* src is a placeholder print drawn for this project: the real one has not been supplied yet */
 export function Demo({ accepted }: { accepted: boolean }) {

@@ -1,6 +1,6 @@
 "use client";
 import { Panel } from "../Panel";
-import { Signature } from "./Signature";
+import { Signature } from "../../../components/Signature";
 
 export function Demo({ accepted }: { accepted: boolean }) {
   return (

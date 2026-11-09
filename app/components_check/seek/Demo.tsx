@@ -1,6 +1,6 @@
 "use client";
 import { Panel } from "../Panel";
-import { Seek } from "./Seek";
+import { Seek } from "../../../components/Seek";
 
 export function Demo({ accepted }: { accepted: boolean }) {
   return (

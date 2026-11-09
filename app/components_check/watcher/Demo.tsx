@@ -1,6 +1,6 @@
 "use client";
 import { Panel } from "../Panel";
-import { SHAPES, Watcher } from "./Watcher";
+import { SHAPES, Watcher } from "../../../components/Watcher";
 
 export function Demo({ accepted }: { accepted: boolean }) {
   return (

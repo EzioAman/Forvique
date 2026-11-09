@@ -9,6 +9,12 @@
         "dev"
       ],
       "port": 3000
+    },
+    {
+      "name": "harness-web",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--dir", "Harness Code/web", "exec", "next", "dev", "--turbopack", "-p", "3100"],
+      "port": 3100
     }
   ]
 }

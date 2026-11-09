@@ -1,23 +1,4 @@
 {
-  "watcher": {
-    "at": "2026-11-08T00:25:33.949Z",
-    "settings": {
-      "fill": "Dark",
-      "shape": "Ball",
-      "eyes": "Dots",
-      "follow": 50,
-      "bounce": 30,
-      "size": 100,
-      "eyeScale": 1,
-      "eyeWidth": 1,
-      "eyeHeight": 1,
-      "eyeRound": 1,
-      "mood": "Neutral",
-      "poke": "Random",
-      "speech": "On",
-      "idleStyle": "Random"
-    }
-  },
   "signature": {
     "at": "2026-11-08T00:40:25.288Z",
     "settings": {
@@ -44,6 +25,25 @@
       "pace": 5,
       "ripple": 50,
       "corner": 20
+    }
+  },
+  "watcher": {
+    "at": "2026-11-08T22:31:09.029Z",
+    "settings": {
+      "fill": "Dark",
+      "shape": "Ball",
+      "eyes": "Dots",
+      "follow": 50,
+      "bounce": 30,
+      "size": 100,
+      "eyeScale": 1,
+      "eyeWidth": 1,
+      "eyeHeight": 1,
+      "eyeRound": 1,
+      "mood": "Neutral",
+      "poke": "Random",
+      "speech": "On",
+      "idleStyle": "Random"
     }
   }
 }

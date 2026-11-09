@@ -49,3 +49,7 @@
 
 @media (max-width: 1100px) { .cc-main { flex-direction: column; } .cc-panel { width: auto; align-self: stretch; } }
 @media (max-width: 800px) { .cc { flex-direction: column; } .cc-side { position: static; width: auto; max-height: none; } }
+
+.cc-lock { margin: -8px 0 14px; font-size: 13px; color: var(--cc-muted); }
+.cc-seg button:disabled, .cc-slider input:disabled { cursor: not-allowed; }
+.cc-slider:has(input:disabled) { opacity: 0.6; }

@@ -1,5 +1,12 @@
 "use client";
 import { useSyncExternalStore } from "react";
+import acceptedFile from "../app/components_check/accepted.json";
+
+/* What the user pressed Accept on: { group: { settings } }. For those groups these values ARE the
+   settings, everywhere: the defaults, and nothing in a browser can change them. Only groups still in
+   review read (and write) the per-browser overrides the settings panel uses. */
+const ACCEPTED = acceptedFile as Record<string, { settings: Record<string, number | string> }>;
+export const isLocked = (group: string) => group in ACCEPTED;
 
 /* One schema drives both the store and the settings panel. A new
    component = a new group here; nothing else to wire. */
@@ -51,7 +58,10 @@ export const SCHEMA: Record<string, Field[]> = {
 type Values = Record<string, Record<string, number | string>>;
 const KEY = "forvique-settings";
 const defaults = (): Values =>
-  Object.fromEntries(Object.entries(SCHEMA).map(([g, f]) => [g, Object.fromEntries(f.map((x) => [x.key, x.def]))]));
+  Object.fromEntries(Object.entries(SCHEMA).map(([g, f]) => [g, {
+    ...Object.fromEntries(f.map((x) => [x.key, x.def])),
+    ...(ACCEPTED[g]?.settings ?? {}),
+  }]));
 const DEFAULTS = defaults();
 
 let cache: Values = DEFAULTS;
@@ -62,7 +72,7 @@ function load() {
     const saved = JSON.parse(localStorage.getItem(KEY) ?? "{}");
     const out = defaults();
     /* keep a saved value only if the schema still allows it */
-    for (const g in out) for (const f of SCHEMA[g]) {
+    for (const g in out) if (!isLocked(g)) for (const f of SCHEMA[g]) {
       const v = saved[g]?.[f.key];
       if (f.kind === "select" ? f.options.includes(v) : typeof v === "number" && v >= f.min && v <= f.max) out[g][f.key] = v;
     }
@@ -90,6 +100,7 @@ function subscribe(l: () => void) {
 }
 
 export function setSetting(group: string, key: string, value: number | string) {
+  if (isLocked(group)) return; /* accepted: undo the accept to edit */
   cache = { ...cache, [group]: { ...cache[group], [key]: value } };
   try { localStorage.setItem(KEY, JSON.stringify(cache)); } catch {}
   emit();
