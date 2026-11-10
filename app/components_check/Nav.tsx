@@ -22,14 +22,19 @@ function Group({ label, items, href }: { label: string; items: string[]; href?: 
   );
 }
 
-export function Nav({ review, ready, ui }: { review: string[]; ready: string[]; ui: string[] }) {
+export function Nav({ review, ready, ui, harness }: {
+  review: string[]; ready: string[]; ui: string[]; harness: { review: string[]; ready: string[] };
+}) {
   const to = (s: string) => `/components_check/${s}`;
+  const hk = (s: string) => `/components_check/harness/${s}`;
   return (
     <nav className="cc-side" aria-label="Components">
       <p className="cc-brand">Forvique components</p>
       <Group label="In review" items={review} href={to} />
       <Group label="Ready to use" items={ready} href={to} />
       <Group label="components/ui" items={ui} />
+      <Group label="Harness: in review" items={harness.review} href={hk} />
+      <Group label="Harness: ready to use" items={harness.ready} href={hk} />
     </nav>
   );
 }

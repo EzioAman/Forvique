@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@harness/*": ["./app/components_check/harness/*"]
     }
   },
   "include": [

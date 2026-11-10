@@ -3,6 +3,7 @@
 import { useState, type PropsWithChildren } from "react";
 import {
   defineToolkit,
+  useAui,
   useAuiState,
   type ToolCallMessagePartComponent,
   type ToolCallMessagePartProps,
@@ -17,6 +18,12 @@ import { OptionList } from "@/components/option-list";
 import { ElicitationForm, type ElicitationField } from "@/components/elicitation-form";
 import { WebPreview } from "@/components/web-preview";
 import { WebSearch } from "@/components/web-search";
+import { ImageGallery } from "@/components/image-gallery";
+import { LinkPreview } from "@/components/link-preview";
+import { NumberTicker } from "@/components/number-ticker";
+import { Suggestions } from "@/components/suggestions";
+import { JSONGenerativeUI } from "@assistant-ui/generative-ui/react";
+import { styledGenerativeUILibrary } from "@/components/generative-ui";
 import type { ThreadGroupPart } from "@/components/thread.aui";
 
 /* How each agent tool shows in the thread. The agent (Harness Code/agent) owns the schemas;
@@ -48,6 +55,8 @@ const TOOLS: Record<string, { done: string; active: string; verb: string; icon: 
     icon: Pencil,
   },
   open_page: { done: "Opened a page", active: "Opening a page", verb: "Opened", icon: Globe },
+  image_search: { done: "Found images", active: "Finding images", verb: "Images", icon: Search },
+  link_preview: { done: "Read a link", active: "Reading a link", verb: "Previewed", icon: Globe },
 };
 const meta = (name: string) =>
   TOOLS[name] ?? { done: `Used ${name}`, active: `Using ${name}`, verb: name, icon: Wrench };
@@ -110,9 +119,11 @@ type TableArgs = {
   rows?: DataTableRow[];
 };
 const TableTool: ToolCallMessagePartComponent<TableArgs> = ({ args }) => {
-  if (!args.columns?.length || !args.rows) return null; // still streaming
-  const columns: DataTableColumn[] = args.columns.map((c) => ({
-    key: c.key,
+  if (!args.columns?.length || !args.rows?.length) return null; // still streaming
+  // weak models drop column keys; match columns to row keys by position (a keyless column also crashes DataTable)
+  const rowKeys = Object.keys(args.rows[0] ?? {});
+  const columns: DataTableColumn[] = args.columns.map((c, i) => ({
+    key: c?.key || rowKeys[i] || String(i),
     label: c.label,
     format:
       c.kind === "currency"
@@ -120,7 +131,9 @@ const TableTool: ToolCallMessagePartComponent<TableArgs> = ({ args }) => {
           ? { kind: "currency", currency: c.currency }
           : { kind: "number" } // no code given: don't guess a currency
         : c.kind && c.kind !== "text"
-          ? ({ kind: c.kind } as DataTableColumn["format"])
+          ? c.kind === "percent"
+            ? { kind: "percent", basis: "unit" } // models write 12 for 12%; the registry default reads 12 as 1200%
+            : ({ kind: c.kind } as DataTableColumn["format"])
           : undefined,
   }));
   return <DataTable columns={columns} rows={args.rows} caption={args.caption} className="my-2" />;
@@ -174,7 +187,9 @@ const PageTool: ToolCallMessagePartComponent<{ url?: string }> = ({ args }) => {
         key={key}
         src={url.href}
         sandbox="allow-scripts allow-same-origin allow-forms"
-        referrerPolicy="no-referrer"
+        // origin only (the browser default): YouTube embeds refuse to play without a referrer (error 153)
+        referrerPolicy="strict-origin-when-cross-origin"
+        allow="encrypted-media; fullscreen; picture-in-picture"
         className="h-80 w-full border-0"
         onLoad={() => setLoading(false)}
         title={url.host}
@@ -242,7 +257,15 @@ const AskUserTool: ToolCallMessagePartComponent<AskArgs> = ({ args, result, addR
       fields={fields}
       state={answer ? (answer.action === "accept" ? "accepted" : "declined") : "request"}
       onFieldChange={(name, value) => setValues((v) => ({ ...v, [name]: value }))}
-      onAccept={() => addResult({ action: "accept", content: values })}
+      // send every field: untouched ones as empty, toggles left off as "false"
+      onAccept={() =>
+        addResult({
+          action: "accept",
+          content: Object.fromEntries(
+            fields.map((f) => [f.name, f.value || (f.kind === "toggle" ? "false" : "")]),
+          ),
+        })
+      }
       onDecline={() => addResult({ action: "decline" })}
       className="my-2"
     />
@@ -258,6 +281,7 @@ const hostOf = (url: string) => {
   }
 };
 const WebSearchTool: ToolCallMessagePartComponent<{ query?: string }> = (p) => {
+  const parts = useAuiState((s) => s.message.parts);
   if (failure(p)) return <GenericTool {...p} />;
   // a server search with no result that is no longer running was cut off (e.g. the agent restarted mid-run)
   if (p.result === undefined && p.status.type !== "running")
@@ -271,24 +295,112 @@ const WebSearchTool: ToolCallMessagePartComponent<{ query?: string }> = (p) => {
         retrying={false}
       />
     );
-  const hits = parse<SearchHit[]>(p.result) ?? [];
+  // models often search several times in one reply: the first search shows one card for all of them
+  // (failed or cut-off searches keep their own error card above)
+  const searches = parts.flatMap((q) =>
+    q.type === "tool-call" &&
+    q.toolName === "web_search" &&
+    !q.isError &&
+    (q.result !== undefined || q.status?.type === "running")
+      ? [q]
+      : [],
+  );
+  if (searches[0]?.toolCallId !== p.toolCallId) return null;
+  const hits = searches.flatMap((q) => parse<SearchHit[]>(q.result) ?? []);
   // one result per domain: the registry WebSearch keys rows by domain, so repeats would collide
   const results = hits
     .map((h) => ({ title: h.title, domain: hostOf(h.link) }))
     .filter((r, i, all) => all.findIndex((x) => x.domain === r.domain) === i);
   return (
     <WebSearch
-      query={p.args.query ?? ""}
+      query={searches.map((q) => (q.args as { query?: string }).query ?? "").filter(Boolean).join(" · ")}
       results={results}
       visibleResults={results.length}
-      searching={p.result === undefined}
+      searching={searches.some((q) => q.result === undefined)}
       cycle={0}
       className="my-2"
     />
   );
 };
 
+const isWeb = (u: unknown): u is string => typeof u === "string" && /^https?:\/\//i.test(u);
+
+type ImageHit = { src: string; title?: string; source?: string };
+const ImagesTool: ToolCallMessagePartComponent<{ query?: string }> = ({ result, isError }) => {
+  if (isError) return null; // the tool timeline shows the failure
+  const images = (parse<ImageHit[]>(result) ?? [])
+    .filter((h) => isWeb(h.src))
+    .map((h, i) => ({
+      id: `${i}`,
+      src: h.src,
+      alt: h.title ?? "",
+      caption: h.title,
+      source: isWeb(h.source) ? { label: hostOf(h.source), url: h.source } : undefined,
+    }));
+  return images.length ? <ImageGallery images={images} className="my-2" /> : null;
+};
+
+type PageMeta = { href: string; title?: string; description?: string; image?: string; siteName?: string; favicon?: string };
+const LinkPreviewTool: ToolCallMessagePartComponent<{ url?: string }> = ({ result, isError }) => {
+  const meta = isError ? undefined : parse<PageMeta>(result);
+  if (!meta || !isWeb(meta.href)) return null;
+  return (
+    <LinkPreview
+      href={meta.href}
+      title={meta.title}
+      description={meta.description}
+      image={isWeb(meta.image) ? meta.image : undefined}
+      imageAlt={meta.title}
+      siteName={meta.siteName}
+      favicon={isWeb(meta.favicon) ? meta.favicon : undefined}
+      className="my-2"
+    />
+  );
+};
+
+const StatTool: ToolCallMessagePartComponent<{ label?: string; value?: number }> = ({ args }) =>
+  typeof args.value === "number" && args.label ? (
+    <NumberTicker value={args.value} label={args.label} className="my-2" />
+  ) : null;
+
+/* Follow-ups: shown under the last reply only; picking one sends it as the user's next message. */
+const FollowupsTool: ToolCallMessagePartComponent<{ suggestions?: string[] }> = ({ args }) => {
+  const aui = useAui();
+  const isLast = useAuiState((s) => s.thread.messages.at(-1)?.id === s.message.id);
+  // args stream in partially and weak models send odd shapes; anything not a string array shows nothing
+  const suggestions = (Array.isArray(args.suggestions) ? args.suggestions : []).filter(
+    (s) => typeof s === "string" && s.trim(),
+  );
+  if (!isLast || !suggestions.length) return null;
+  return (
+    <Suggestions
+      suggestions={suggestions}
+      selectedSuggestion={null}
+      cycle={0}
+      variant="pills"
+      onSuggestion={(text) => aui.thread().append({ role: "user", content: [{ type: "text", text }] })}
+      className="my-2"
+    />
+  );
+};
+
+/* Generative UI: the model draws a tree of library components (cards, maps, diagrams...) with `present`, or asks
+   through one with `prompt_user`. The agent learns both schemas from the run context (`uiTools`), so they never drift. */
+const genui = new JSONGenerativeUI({ library: styledGenerativeUILibrary });
+const present = genui.present({ display: "standalone" }); // its own surface, not hidden in the collapsed tool group
+const promptUser = genui.promptUser();
+export const uiTools = [
+  { name: "present", description: present.description, parameters: present.parameters },
+  { name: "prompt_user", description: promptUser.description, parameters: promptUser.parameters },
+];
+
 export const toolkit = defineToolkit({
+  present,
+  prompt_user: promptUser,
+  image_search: { type: "backend", display: "standalone", render: ImagesTool },
+  link_preview: { type: "backend", display: "standalone", render: LinkPreviewTool },
+  show_stat: { type: "backend", display: "standalone", render: StatTool },
+  suggest_followups: { type: "backend", display: "standalone", render: FollowupsTool },
   web_search: { type: "backend", display: "standalone", render: WebSearchTool },
   show_table: { type: "backend", display: "standalone", render: TableTool },
   show_chart: { type: "backend", display: "standalone", render: ChartTool },

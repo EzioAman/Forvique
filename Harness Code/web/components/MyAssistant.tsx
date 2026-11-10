@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import {
   AssistantCloud,
   AssistantRuntimeProvider,
@@ -8,6 +8,8 @@ import {
   SimpleImageAttachmentAdapter,
   Suggestions,
   Tools,
+  useAui,
+  useAuiState,
   WebSpeechDictationAdapter,
   WebSpeechSynthesisAdapter,
 } from "@assistant-ui/react";
@@ -16,11 +18,13 @@ import { Thread } from "@/components/thread.aui";
 import { ThreadListSidebar } from "@/components/threadlist-sidebar.aui";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
-import { GenericTool, HarnessToolGroup, toolkit } from "@/components/harness-tools";
+import { GenericTool, HarnessToolGroup, toolkit, uiTools } from "@/components/harness-tools";
+import { Welcome } from "@/components/harness-welcome";
 import { DevToolsModal } from "@assistant-ui/react-devtools";
 import { RunError } from "@/components/run-notices";
 import { ComposerModel, DEFAULT_MODEL, ModelChoice } from "@/components/model-choice";
 import { createClient } from "@/lib/chatApi";
+import type { Client } from "@langchain/langgraph-sdk";
 import { createHarnessStream } from "@/lib/harnessStream";
 
 const ASSISTANT_ID = process.env["NEXT_PUBLIC_LANGGRAPH_ASSISTANT_ID"] ?? "agent";
@@ -62,19 +66,35 @@ const threadComponents = {
   ToolFallback: GenericTool,
   ToolGroup: HarnessToolGroup,
   ComposerExtra: ComposerModel,
+  Welcome,
 };
 
 export function MyAssistant() {
   const client = useMemo(() => createClient(), []);
   const [model, setModel] = useState(DEFAULT_MODEL);
+  const [effort, setEffort] = useState("");
+  const [spent, setSpent] = useState(0);
+  const effortRef = useRef(effort);
+  effortRef.current = effort;
   const modelRef = useRef(model); // the stream reads the latest choice at send time
+  const quoteRef = useRef<string>(undefined); // set by QuoteCapture, taken by the stream when it sends
   modelRef.current = model;
   const stream = useMemo(
     () =>
       createHarnessStream({
         client,
         assistantId: ASSISTANT_ID,
-        getContext: () => ({ model: modelRef.current, client: "web" }),
+        getContext: () => ({
+          model: modelRef.current,
+          client: "web",
+          ui_tools: uiTools,
+          ...(effortRef.current && { effort: effortRef.current }),
+        }),
+        takeQuote: () => {
+          const quote = quoteRef.current;
+          quoteRef.current = undefined;
+          return quote;
+        },
       }),
     [client],
   );
@@ -93,6 +113,16 @@ export function MyAssistant() {
       const { thread_id } = await client.threads.create();
       return { externalId: thread_id };
     },
+    // retry, reload and edit fork from the checkpoint whose messages match the ones kept
+    getCheckpointId: async (threadId, parentMessages) => {
+      const history = await client.threads.getHistory<{ messages?: LangChainMessage[] }>(threadId);
+      const match = history.find(
+        (s) =>
+          s.values.messages?.length === parentMessages.length &&
+          parentMessages.every((m, i) => m.id === s.values.messages?.[i]?.id),
+      );
+      return match?.checkpoint.checkpoint_id ?? null;
+    },
     load: async (externalId) => {
       const state = await client.threads.getState<{ messages: LangChainMessage[] }>(externalId);
       return { messages: state.values.messages, interrupts: state.tasks[0]?.interrupts };
@@ -107,7 +137,9 @@ export function MyAssistant() {
 
   return (
     <AssistantRuntimeProvider runtime={runtime} config={config}>
-      <ModelChoice.Provider value={{ model, setModel }}>
+      <ModelChoice.Provider value={{ model, setModel, effort, setEffort, spent }}>
+        <QuoteCapture quoteRef={quoteRef} />
+        <ReasoningSpent client={client} onSpent={setSpent} />
         <SidebarProvider>
           <div className="flex h-dvh w-full pr-0.5">
             <ThreadListSidebar />
@@ -129,4 +161,39 @@ export function MyAssistant() {
       </ModelChoice.Provider>
     </AssistantRuntimeProvider>
   );
+}
+
+/* The LangGraph runtime drops a message's quote metadata before the stream sees it, so the composer's quote is
+   kept here. Sending clears the text and the quote together; dismissing clears only the quote, so drop it then. */
+function QuoteCapture({ quoteRef }: { quoteRef: RefObject<string | undefined> }) {
+  const quote = useAuiState((s) => s.thread.composer.quote?.text);
+  const text = useAuiState((s) => s.thread.composer.text);
+  const prev = useRef({ quote, text });
+  useEffect(() => {
+    const sent = prev.current.quote && !quote && prev.current.text && !text;
+    if (quote) quoteRef.current = quote;
+    else if (!sent) quoteRef.current = undefined;
+    prev.current = { quote, text };
+  }, [quote, text, quoteRef]);
+  return null;
+}
+
+/* Reasoning tokens of the last reply, read from the agent's thread state when a run ends (the runtime does not
+   carry usage into thread messages). */
+function ReasoningSpent({ client, onSpent }: { client: Client; onSpent: (n: number) => void }) {
+  const aui = useAui();
+  const running = useAuiState((s) => s.thread.isRunning);
+  useEffect(() => {
+    if (running) return;
+    const id = aui.threadListItem().getState().externalId;
+    if (!id) return onSpent(0);
+    client.threads
+      .getState<{ messages?: { type: string; usage_metadata?: { output_token_details?: { reasoning?: number } } }[] }>(id)
+      .then((s) => {
+        const last = s.values.messages?.findLast((m) => m.type === "ai");
+        onSpent(last?.usage_metadata?.output_token_details?.reasoning ?? 0);
+      })
+      .catch(() => {}); // thread not created yet or agent down: keep the last figure
+  }, [running, aui, client, onSpent]);
+  return null;
 }

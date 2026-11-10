@@ -11,12 +11,10 @@ Forvique's coding and research agent, shipped as two clients over one agent.
 
 ## Run it
 
-1. Agent: copy `agent/.env.example` to `agent/.env` and fill in a key for each provider users may pick. Then:
-   ```
-   cd agent
-   uv run langgraph dev --no-browser --port 2024
-   ```
-2. Web: copy `web/.env.example` to `web/.env.local`, then `pnpm install` and `pnpm dev` in `web/`. Open `/harness`.
+1. Agent: copy `agent/.env.example` to `agent/.env` and fill in a key for each provider users may pick.
+2. Web: copy `web/.env.example` to `web/.env.local`, then `pnpm install` and `pnpm dev` in `web/`. This starts the
+   agent (`langgraph dev` on :2024) and the web app together; Ctrl+C stops both. Open `/harness`.
+   `pnpm dev:web` starts the web app alone; the agent alone is `uv run langgraph dev --no-browser --port 2024` in `agent/`.
 3. Desktop: copy `desktop/.env.example` to `desktop/.env.local`, then `pnpm install` and `pnpm app` in `desktop/`.
 
 Both apps reach the agent at `NEXT_PUBLIC_LANGGRAPH_API_URL` / `VITE_LANGGRAPH_API_URL` (`http://localhost:2024` in development).

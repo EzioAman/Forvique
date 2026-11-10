@@ -1,6 +1,7 @@
 "use client";
 import { useSyncExternalStore } from "react";
 import acceptedFile from "../app/components_check/accepted.json";
+import { group, HARNESS } from "../app/components_check/harness/registry";
 
 /* What the user pressed Accept on: { group: { settings } }. For those groups these values ARE the
    settings, everywhere: the defaults, and nothing in a browser can change them. Only groups still in
@@ -53,6 +54,8 @@ export const SCHEMA: Record<string, Field[]> = {
     { key: "width", label: "Width", kind: "range", min: 240, max: 400, step: 1, def: 240, unit: "px" },
     { key: "corner", label: "Corner", kind: "range", min: 0, max: 24, step: 1, def: 24, unit: "px" },
   ],
+  /* Harness components (app/components_check/harness), one group per component */
+  ...Object.fromEntries(Object.entries(HARNESS).map(([slug, m]) => [group(slug), m.fields])),
 };
 
 type Values = Record<string, Record<string, number | string>>;

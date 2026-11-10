@@ -49,7 +49,9 @@ export function WebSearch({
         {searching ? (
           <ShimmerLabel className="relative inline-block leading-none">Searching</ShimmerLabel>
         ) : (
-          <span className="fade-in animate-in duration-300">Read 3 sources</span>
+          <span className="fade-in animate-in duration-300">
+            Read {results.length} {results.length === 1 ? "source" : "sources"}
+          </span>
         )}
       </div>
       <div className="flex min-h-[5.75rem] flex-col">

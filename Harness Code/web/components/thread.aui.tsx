@@ -11,6 +11,7 @@ import { Image } from "@/components/image";
 import { StreamdownText } from "@/components/streamdown-text";
 import { ComposerTriggers } from "@/components/composer-triggers";
 import { StoppedRunNotice } from "@/components/run-notices";
+import { ComposerQuotePreview, SelectionToolbar } from "@/components/quote.aui";
 import { DirectiveText } from "@/components/directive-text.aui";
 import {
   Reasoning,
@@ -244,12 +245,16 @@ const ThreadRoot: FC<{ isEmpty: boolean; autoFocus: boolean }> = ({ isEmpty, aut
             <ThreadScrollToBottom />
             <ThreadFollowupSuggestions />
             <Composer autoFocus={autoFocus} />
-            <AuiIf condition={(s) => isNewChatView(s) && s.composer.isEmpty}>
-              <ThreadSuggestions />
-            </AuiIf>
+            {/* a custom Welcome (harness-welcome.tsx) shows the suggestions itself */}
+            {Welcome === ThreadWelcome && (
+              <AuiIf condition={(s) => isNewChatView(s) && s.composer.isEmpty}>
+                <ThreadSuggestions />
+              </AuiIf>
+            )}
           </ThreadPrimitive.ViewportFooter>
         </div>
       </ThreadPrimitive.Viewport>
+      <SelectionToolbar />
     </ThreadPrimitive.Root>
   );
 };
@@ -497,6 +502,7 @@ const Composer: FC<{ autoFocus: boolean }> = ({ autoFocus }) => {
             />
           }
         >
+          <ComposerQuotePreview />
           <ComposerAttachments />
           <ComposerPrimitive.Input
             placeholder="Send a message..."

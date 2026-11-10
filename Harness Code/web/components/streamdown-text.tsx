@@ -11,6 +11,14 @@ import { code } from "@streamdown/code";
 import { math } from "@streamdown/math";
 import "katex/dist/katex.min.css";
 import { Citation } from "@/components/inline-citation";
+import { MermaidDiagram } from "@/components/mermaid-diagram";
+
+/* ```mermaid fences render as diagrams; the skeleton shows until the reply finishes, since a half-written diagram fails to parse */
+const Mermaid = ({ code }: { code: string }) => {
+  const streaming = useAuiState((s) => s.message.status?.type === "running");
+  return <MermaidDiagram code={code} streaming={streaming} />;
+};
+const byLanguage = { mermaid: { SyntaxHighlighter: Mermaid } };
 
 /* Assistant text: Shiki code blocks with copy buttons, KaTeX math, tables. Models often write \( \) and
    \[ \] math, and prices like "$5 to $10" must not turn into a formula. */
@@ -80,6 +88,7 @@ export const StreamdownText = () => {
       shikiTheme={["github-light", "github-dark"]}
       // Streamdown types `components` two incompatible ways; the anchor props are what it passes at runtime
       components={{ a: a as never }}
+      componentsByLanguage={byLanguage}
     />
   );
 };

@@ -45,5 +45,28 @@
       "speech": "On",
       "idleStyle": "Random"
     }
+  },
+  "harness-thinking-indicator": {
+    "at": "2026-11-10T11:14:37.098Z",
+    "settings": {
+      "label": "Long",
+      "timer": "On"
+    }
+  },
+  "harness-empty-state": {
+    "at": "2026-11-10T11:27:59.056Z",
+    "settings": {
+      "greeting": "Long",
+      "count": 4,
+      "composer": "On"
+    }
+  },
+  "harness-quote-reply": {
+    "at": "2026-11-10T11:56:01.829Z",
+    "settings": {
+      "selection": "Long",
+      "toolbar": "On",
+      "quoted": "On"
+    }
   }
 }

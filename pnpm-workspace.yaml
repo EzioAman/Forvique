@@ -1,4 +1,9 @@
 allowBuilds:
   sharp: false
   unrs-resolver: false
+minimumReleaseAgeExclude:
+  - '@assistant-ui/core@0.3.34'
+  - '@assistant-ui/react@0.15.34'
+  - assistant-cloud@0.2.11
+  - assistant-stream@0.3.57
 storeDir: ./.pnpm-store

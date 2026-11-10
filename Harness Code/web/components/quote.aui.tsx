@@ -2,8 +2,8 @@
 
 import { memo, type ComponentProps, type FC } from "react";
 import type { QuoteMessagePartComponent } from "@assistant-ui/react";
-import { ComposerPrimitive, SelectionToolbarPrimitive } from "@assistant-ui/react";
-import { QuoteIcon, XIcon } from "lucide-react";
+import { ComposerPrimitive, SelectionToolbarPrimitive, useAui } from "@assistant-ui/react";
+import { PencilLineIcon, QuoteIcon, SparklesIcon, XIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 function QuoteBlockRoot({ className, ...props }: ComponentProps<"div">) {
@@ -105,6 +105,29 @@ function SelectionToolbarQuote({
   );
 }
 
+/* Quote the selection and send `prompt` right away. The primitive runs our onClick before it sets the quote,
+   so the send waits a tick; the composer's draft text is replaced. */
+function SelectionToolbarAsk({
+  prompt,
+  className,
+  ...props
+}: ComponentProps<typeof SelectionToolbarPrimitive.Quote> & { prompt: string }) {
+  const aui = useAui();
+  return (
+    <SelectionToolbarQuote
+      className={className}
+      onClick={() =>
+        setTimeout(() => {
+          const composer = aui.thread().composer();
+          composer.setText(prompt);
+          composer.send();
+        })
+      }
+      {...props}
+    />
+  );
+}
+
 /**
  * Floating toolbar that appears when text is selected in a message.
  *
@@ -125,6 +148,14 @@ const SelectionToolbarImpl: FC<ComponentProps<typeof SelectionToolbarRoot>> = ({
   return (
     <SelectionToolbarRoot className={className} {...props}>
       <SelectionToolbarQuote />
+      <SelectionToolbarAsk prompt="Explain this.">
+        <SparklesIcon className="size-3.5" />
+        Explain
+      </SelectionToolbarAsk>
+      <SelectionToolbarAsk prompt="Rewrite this.">
+        <PencilLineIcon className="size-3.5" />
+        Rewrite
+      </SelectionToolbarAsk>
     </SelectionToolbarRoot>
   );
 };
@@ -183,20 +214,14 @@ function ComposerQuotePreviewDismiss({
     "shrink-0 rounded-sm p-0.5 text-muted-foreground/70 transition-colors hover:bg-accent hover:text-foreground";
 
   return (
+    // QuoteDismiss renders a <button> itself: the default look goes on it, not on a nested button
     <ComposerPrimitive.QuoteDismiss
       data-slot="composer-quote-dismiss"
-      className={children ? className : undefined}
+      aria-label={children ? undefined : "Dismiss quote"}
+      className={children ? className : cn(defaultClassName, className)}
       {...props}
     >
-      {children ?? (
-        <button
-          type="button"
-          aria-label="Dismiss quote"
-          className={cn(defaultClassName, className)}
-        >
-          <XIcon className="size-3.5" />
-        </button>
-      )}
+      {children ?? <XIcon className="size-3.5" />}
     </ComposerPrimitive.QuoteDismiss>
   );
 }
