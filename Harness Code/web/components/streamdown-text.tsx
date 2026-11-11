@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, type ComponentProps, type ReactNode } from "react";
+import { isValidElement, useMemo, type ComponentProps, type ReactNode } from "react";
 import { useAuiState } from "@assistant-ui/react";
 import {
   StreamdownTextPrimitive,
@@ -38,6 +38,18 @@ const textOf = (node: ReactNode): string =>
     : Array.isArray(node)
       ? node.map(textOf).join("")
       : "";
+
+/* Streamdown's image renders a <div> wrapper and its paragraph only unwraps a lone image, so an image beside
+   text would put a <div> inside <p> (a hydration error); such paragraphs render as a <div> instead. */
+const hasImage = (node: ReactNode): boolean =>
+  Array.isArray(node)
+    ? node.some(hasImage)
+    : isValidElement<{ node?: { tagName?: string }; children?: ReactNode }>(node) &&
+      (node.props.node?.tagName === "img" || hasImage(node.props.children)); // also a linked image [![](src)](href)
+const p = (props: Record<string, unknown>) => {
+  const { children, node: _node, ...rest } = props as ComponentProps<"p"> & { node?: unknown };
+  return hasImage(children) ? <div {...rest}>{children}</div> : <p {...rest}>{children}</p>;
+};
 
 /* Web links in a reply become numbered citations; the snippet comes from this message's web_search results. */
 export const StreamdownText = () => {
@@ -87,7 +99,7 @@ export const StreamdownText = () => {
       preprocess={preprocess}
       shikiTheme={["github-light", "github-dark"]}
       // Streamdown types `components` two incompatible ways; the anchor props are what it passes at runtime
-      components={{ a: a as never }}
+      components={{ a: a as never, p: p as never }}
       componentsByLanguage={byLanguage}
     />
   );

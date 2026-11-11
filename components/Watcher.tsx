@@ -38,6 +38,9 @@ const EMOS: Record<string, Emo> = {
   Surprised: { ...N, scale: 1.4, dy: -1.5 },
   Sleepy: { ...N, lid: 0.58, cheek: 0.12, dy: 2 },
   Love: { ...N, lid: 0.25, ang: -6, scale: 0.88, dy: 2.5, blush: 1, gx: -0.22, gy: 0.2 }, /* shown as shy */
+  /* working states, for when it stands in for an agent: looking up and away, then down at the page */
+  Thinking: { ...N, lid: 0.18, gx: 0.3, gy: -0.34 },
+  Writing: { ...N, lid: 0.3, scale: 0.94, gy: 0.36 },
 };
 const POKES = ["Happy", "Angry", "Sad", "Surprised", "Sleepy", "Love"];
 const SAY: Record<string, string[]> = {
@@ -554,6 +557,7 @@ export function Watcher(props: Props) {
     <div
       className="eyt"
       data-fill={fill}
+      data-mood={mood}
       ref={box}
       style={{ "--eyt-size": `${s}px` } as React.CSSProperties}
       role="img"

@@ -30,7 +30,7 @@ export const SCHEMA: Record<string, Field[]> = {
     { key: "eyeWidth", label: "Eye width", kind: "range", min: 0.5, max: 2, step: 0.05, def: 1, adv: true },
     { key: "eyeHeight", label: "Eye height", kind: "range", min: 0.5, max: 2, step: 0.05, def: 1, adv: true },
     { key: "eyeRound", label: "Eye roundness", kind: "range", min: 0, max: 1, step: 0.05, def: 1, adv: true },
-    { key: "mood", label: "Mood", kind: "select", options: ["Neutral", "Happy", "Angry", "Sad", "Surprised", "Sleepy", "Love"], def: "Neutral" },
+    { key: "mood", label: "Mood", kind: "select", options: ["Neutral", "Happy", "Angry", "Sad", "Surprised", "Sleepy", "Love", "Thinking", "Writing"], def: "Neutral" },
     { key: "poke", label: "Poke", kind: "select", options: ["Random", "Happy", "Angry", "Sad", "Surprised", "Sleepy", "Love"], def: "Random" },
     { key: "speech", label: "Speech", kind: "select", options: ["On", "Off"], def: "On" },
     { key: "idleStyle", label: "Idle", kind: "select", options: ["Off", "Random", "Playful", "Cheerful", "Sleepy", "Curious"], def: "Random" },

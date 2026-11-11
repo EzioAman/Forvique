@@ -387,8 +387,28 @@ const FollowupsTool: ToolCallMessagePartComponent<{ suggestions?: string[] }> = 
 /* Generative UI: the model draws a tree of library components (cards, maps, diagrams...) with `present`, or asks
    through one with `prompt_user`. The agent learns both schemas from the run context (`uiTools`), so they never drift. */
 const genui = new JSONGenerativeUI({ library: styledGenerativeUILibrary });
-const present = genui.present({ display: "standalone" }); // its own surface, not hidden in the collapsed tool group
-const promptUser = genui.promptUser();
+/* The library draws the tree while args stream, so a half-written `_type` ("", "Ma") logs "Unknown component":
+   draw once the args are complete JSON. */
+const whenComplete =
+  (Render: ToolCallMessagePartComponent | undefined): ToolCallMessagePartComponent =>
+  (p) => {
+    try {
+      JSON.parse(p.argsText);
+    } catch {
+      return null;
+    }
+    return Render ? <Render {...p} /> : null;
+  };
+const presentTool = genui.present({ display: "standalone" }); // its own surface, not hidden in the collapsed tool group
+// the library answers `{}`, which models read as "nothing shown" and call present again; the result only goes
+// back to the model, so a string is safe even though the library types the result as `{}`
+const present = {
+  ...presentTool,
+  render: whenComplete(presentTool.render),
+  execute: async () => "Shown to the user.",
+} as unknown as typeof presentTool;
+const promptTool = genui.promptUser();
+const promptUser: typeof promptTool = { ...promptTool, render: whenComplete(promptTool.render) };
 export const uiTools = [
   { name: "present", description: present.description, parameters: present.parameters },
   { name: "prompt_user", description: promptUser.description, parameters: promptUser.parameters },

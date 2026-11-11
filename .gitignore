@@ -43,3 +43,6 @@ next-env.d.ts
 #pnpm
 v11
 .pnpm-store/
+
+# landing-page sign-ups (see app/signup-action.ts)
+/data

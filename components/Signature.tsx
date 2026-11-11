@@ -102,6 +102,8 @@ type Props = {
   corner?: number;
   /* the empty pad writes a faint flourish on its own: On / Off */
   idle?: string;
+  /* told true when the pad folds into Signed, false when it is cleared or signed again */
+  onSigned?: (signed: boolean) => void;
 };
 
 export function Signature(props: Props) {
@@ -119,6 +121,10 @@ export function Signature(props: Props) {
   const redraw = () => setV((v) => v + 1);
   const [cut, setCut] = useState<number | null>(null);
   const [signed, setSigned] = useState(false);
+  const { onSigned } = props;
+  const tell = useRef(onSigned);
+  tell.current = onSigned;
+  useEffect(() => { tell.current?.(signed); }, [signed]);
   /* the beat between: the pause has said it is done, the ink has
      softened to a tint, and the pad has not yet folded away */
   const [settled, setSettled] = useState(false);

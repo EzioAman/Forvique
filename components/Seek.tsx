@@ -118,21 +118,17 @@ export function Seek(props: Props) {
   const corner = props.corner ?? (g.corner as number);
 
   /* narrow, and it can change under you: a phone rotates, a window gets dragged */
-  const [snug, setSnug] = useState(
-    () => typeof window !== "undefined"
-      && window.matchMedia("(max-width: 760px)").matches,
-  );
+  /* both start false and are read on mount: reading the window during render made the server and a phone disagree (hydration error) */
+  const [snug, setSnug] = useState(false);
   /* whether the screen has a keyboard of its own: a different question from `snug`.
      A narrow desktop window is snug and types fine; a tablet is roomy and still
      throws half its screen away to a keyboard. */
-  const [touch, setTouch] = useState(
-    () => typeof window !== "undefined"
-      && window.matchMedia("(pointer: coarse)").matches,
-  );
+  const [touch, setTouch] = useState(false);
   useEffect(() => {
     const room = window.matchMedia("(max-width: 760px)");
     const coarse = window.matchMedia("(pointer: coarse)");
     const read = () => { setSnug(room.matches); setTouch(coarse.matches); };
+    read();
     room.addEventListener("change", read);
     coarse.addEventListener("change", read);
     return () => {
