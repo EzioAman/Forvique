@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Forvique: run Harness
 
-## Getting Started
+Harness is Forvique's AI agent: a chat app that plans, searches the web and uses tools. This guide gets it running
+on your computer.
 
-First, run the development server:
+## 1. Install the tools
+
+- [Node.js](https://nodejs.org) 22 or newer
+- [pnpm](https://pnpm.io/installation): after installing Node, run `corepack enable`
+- [uv](https://docs.astral.sh/uv/getting-started/installation/), which runs the Python agent and installs Python
+  for it
+
+## 2. Get the code and install packages
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/EzioAman/Forvique.git
+cd Forvique
+pnpm install
+pnpm --dir "Harness Code/web" install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 3. Add your keys
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The agent needs at least one model key. [OpenRouter](https://openrouter.ai) is the easiest: one key gives you many
+models, including free ones.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Create a key at https://openrouter.ai/settings/keys.
+2. Copy the agent's example env file:
 
-## Learn More
+   ```bash
+   cp "Harness Code/agent/.env.example" "Harness Code/agent/.env"
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+   (Windows PowerShell: `Copy-Item "Harness Code/agent/.env.example" "Harness Code/agent/.env"`)
+3. Open `Harness Code/agent/.env` and paste your key after `OPENROUTER_API_KEY=`:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```
+   OPENROUTER_API_KEY=sk-or-...
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   Optional, only if you want those providers in the model menu: `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`,
+   `GOOGLE_API_KEY`. Leave the rest as it is.
+4. Copy the chat app's example env file. It needs no changes:
 
-## Deploy on Vercel
+   ```bash
+   cp "Harness Code/web/.env.example" "Harness Code/web/.env.local"
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   (Windows PowerShell: `Copy-Item "Harness Code/web/.env.example" "Harness Code/web/.env.local"`)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Both files stay on your computer; git ignores them. Never commit a key.
+
+## 4. Run it
+
+```bash
+pnpm harness
+```
+
+This starts the agent (port 2024) and the chat app together. The first run takes a minute while uv installs the
+agent's Python packages. When the terminal shows `Local: http://localhost:3000`, open
+**http://localhost:3000/harness**.
+
+Press Ctrl+C to stop both.
+
+## Troubleshooting
+
+| Problem | Fix |
+| --- | --- |
+| Replies fail or say the provider has no key | Check `OPENROUTER_API_KEY` in `Harness Code/agent/.env`, then restart `pnpm harness`. |
+| Replies fail with a credits or payment error | Pick a model marked free in the chat's model menu, or add credits on OpenRouter. |
+| "Port 2024 is in use" | An agent from an earlier run is still running. End the leftover `python` process (Task Manager on Windows) and start again. |
+| The page opens on another port (3001) | Something else uses 3000. Use the address the terminal prints, plus `/harness`. |
+
+## Other parts of the repo
+
+- `pnpm dev` runs the Forvique website; its component showcase is at http://localhost:3000/components_check.
+- The Harness desktop app, tests and known limits: [`Harness Code/README.md`](Harness%20Code/README.md).
