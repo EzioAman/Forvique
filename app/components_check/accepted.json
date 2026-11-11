@@ -1,0 +1,72 @@
+{
+  "signature": {
+    "at": "2026-11-08T00:40:25.288Z",
+    "settings": {
+      "ink": "Black",
+      "pen": 40,
+      "smooth": 50,
+      "rewind": 50,
+      "corner": 20,
+      "idle": "On"
+    }
+  },
+  "seek": {
+    "at": "2026-11-08T00:58:39.884Z",
+    "settings": {
+      "give": 0,
+      "spring": 10,
+      "width": 350,
+      "corner": 24
+    }
+  },
+  "generate": {
+    "at": "2026-11-08T00:58:47.601Z",
+    "settings": {
+      "pace": 5,
+      "ripple": 50,
+      "corner": 20
+    }
+  },
+  "watcher": {
+    "at": "2026-11-08T22:31:09.029Z",
+    "settings": {
+      "fill": "Dark",
+      "shape": "Ball",
+      "eyes": "Dots",
+      "follow": 50,
+      "bounce": 30,
+      "size": 100,
+      "eyeScale": 1,
+      "eyeWidth": 1,
+      "eyeHeight": 1,
+      "eyeRound": 1,
+      "mood": "Neutral",
+      "poke": "Random",
+      "speech": "On",
+      "idleStyle": "Random"
+    }
+  },
+  "harness-thinking-indicator": {
+    "at": "2026-11-10T11:14:37.098Z",
+    "settings": {
+      "label": "Long",
+      "timer": "On"
+    }
+  },
+  "harness-empty-state": {
+    "at": "2026-11-10T11:27:59.056Z",
+    "settings": {
+      "greeting": "Long",
+      "count": 4,
+      "composer": "On"
+    }
+  },
+  "harness-quote-reply": {
+    "at": "2026-11-10T11:56:01.829Z",
+    "settings": {
+      "selection": "Long",
+      "toolbar": "On",
+      "quoted": "On"
+    }
+  }
+}

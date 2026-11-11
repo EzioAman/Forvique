@@ -1,5 +1,4 @@
-# This is Forvique
-Forvique is a startup that aims to deliver reliable SaaS, IaaS productsand solutions to businesses and individuals around the world. 
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 

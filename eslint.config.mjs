@@ -12,8 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    ".agents/**",
-    "opendesigner/**",
+    // Harness Code holds separate apps with their own configs
+    "Harness Code/**",
   ]),
 ]);
 

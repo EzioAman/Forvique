@@ -1,121 +1,69 @@
-import Link from 'next/link';
-import { Suspense } from 'react';
-import { SignInButton, SignUpButton, Show, UserButton } from '@clerk/nextjs';
-import { ThemeToggle } from '@/components/theme-toggle';
+import Image from "next/image";
 
-export const metadata = {
-  title: 'Forvique — Autonomous Intelligence & CRM',
-  description: 'AI agents that actually do the job. Unified autonomous workspace.',
-};
-
-export default function HomePage() {
+export default function Home() {
   return (
-    <div className="min-h-screen bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100 flex flex-col justify-between antialiased selection:bg-neutral-200 dark:selection:bg-neutral-800">
-      {/* Top Navigation */}
-      <header className="fixed top-0 inset-x-0 z-50 h-16 border-b border-neutral-200/80 dark:border-neutral-800/80 bg-white/80 dark:bg-neutral-950/80 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto h-full px-6 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5 font-bold tracking-tight text-neutral-900 dark:text-white">
-            <div className="h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br flex from-neutral-800 to-neutral-900 dark:from-neutral-100 dark:to-neutral-300">
-              <span className="text-white dark:text-neutral-900 font-bold text-sm">F</span>
-            </div>
-            <span className="text-base tracking-tight font-semibold">Forvique</span>
-          </Link>
-
-          <div className="flex items-center gap-3">
-            <Link
-              href="/ai"
-              className="text-xs font-medium px-3 py-1.5 rounded-lg text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-neutral-900 transition-colors hidden sm:inline-block"
-            >
-              AI Workspace
-            </Link>
-            <ThemeToggle />
-            <Suspense fallback={null}>
-              <Show when="signed-out">
-                <SignInButton>
-                  <button
-                    type="button"
-                    className="h-8 items-center rounded-lg px-3 text-[13px] font-medium text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-neutral-900 transition-colors cursor-pointer"
-                  >
-                    Log in
-                  </button>
-                </SignInButton>
-                <SignUpButton>
-                  <button
-                    type="button"
-                    className="h-8 items-center justify-center rounded-lg bg-neutral-900 px-3.5 text-[13px] font-medium text-white hover:bg-neutral-800 dark:bg-neutral-100 dark:text-neutral-950 dark:hover:bg-neutral-200 transition-colors cursor-pointer"
-                  >
-                    Start Free
-                  </button>
-                </SignUpButton>
-              </Show>
-              <Show when="signed-in">
-                <Link
-                  href="/dashboard"
-                  className="h-8 items-center rounded-lg bg-neutral-900 px-3 text-[13px] font-medium text-white dark:bg-neutral-100 dark:text-neutral-950 flex transition-all hover:opacity-90"
-                >
-                  Dashboard
-                </Link>
-                <UserButton />
-              </Show>
-            </Suspense>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Hero */}
-      <main className="flex-1 flex flex-col items-center justify-center pt-24 pb-16 px-6">
-        <div className="max-w-3xl mx-auto text-center flex flex-col items-center">
-          {/* Heading */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-medium tracking-tight text-neutral-900 dark:text-neutral-100 leading-[1.12] text-balance">
-            Autonomous intelligence built for builders.
+    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
+      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
+        <Image
+          className="dark:invert h-5 w-[100px]"
+          src="/next.svg"
+          alt="Next.js logo"
+          width={100}
+          height={20}
+          priority
+        />
+        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
+          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
+            To get started, edit the{" "}
+            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
+              page.tsx
+            </code>{" "}
+            file.
           </h1>
-
-          {/* Subheading */}
-          <p className="mt-6 text-base sm:text-lg text-neutral-600 dark:text-neutral-400 max-w-xl text-balance leading-relaxed">
-            Experience our newly designed intelligent command interface with real-time protocol execution and telemetry.
+          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
+            Looking for a starting point or more instructions? Head over to{" "}
+            <a
+              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+              className="font-medium text-zinc-950 dark:text-zinc-50"
+            >
+              Templates
+            </a>{" "}
+            or the{" "}
+            <a
+              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+              className="font-medium text-zinc-950 dark:text-zinc-50"
+            >
+              Learning
+            </a>{" "}
+            center.
           </p>
-
-          {/* Primary CTA Button to /ai */}
-          <div className="mt-10 flex flex-col sm:flex-row items-center gap-4">
-            <Link
-              href="/ai"
-              className="h-12 w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-neutral-900 px-7 text-sm font-medium text-white shadow-sm transition-all hover:bg-neutral-800 dark:bg-neutral-100 dark:text-neutral-950 dark:hover:bg-neutral-200 group"
-            >
-              <span>Go to AI Page</span>
-              <svg
-                className="w-4 h-4 transition-transform group-hover:translate-x-1"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </Link>
-
-            <Link
-              href="/dashboard"
-              className="h-12 w-full sm:w-auto inline-flex items-center justify-center rounded-xl border border-neutral-200 dark:border-neutral-800 px-6 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-colors"
-            >
-              Open Dashboard
-            </Link>
-          </div>
+        </div>
+        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+          <a
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
+            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image
+              className="dark:invert h-[14px] w-4"
+              src="/vercel.svg"
+              alt="Vercel logomark"
+              width={16}
+              height={14}
+            />
+            Deploy Now
+          </a>
+          <a
+            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
+            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Documentation
+          </a>
         </div>
       </main>
-
-      {/* Minimal Footer */}
-      <footer className="border-t border-neutral-200 dark:border-neutral-800 py-6 px-6">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500 dark:text-neutral-400">
-          <p>© 2026 Forvique, Inc. All rights reserved.</p>
-          <div className="flex items-center gap-6">
-            <Link href="/ai" className="hover:text-neutral-900 dark:hover:text-white transition-colors">
-              AI Command
-            </Link>
-            <Link href="/dashboard" className="hover:text-neutral-900 dark:hover:text-white transition-colors">
-              Workspace
-            </Link>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
