@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "harness": "pnpm --dir \"Harness Code/web\" dev"
   },
   "dependencies": {
     "@assistant-ui/generative-ui": "^0.0.9",
